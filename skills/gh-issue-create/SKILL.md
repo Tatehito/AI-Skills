@@ -83,6 +83,31 @@ description: ユーザーが入力した要件をもとに、github issueにissu
 - Issueが1つだけ
 - 分割したIssueがそれぞれ独立しており、個別にメインブランチへマージしても問題ない
 
+## 親Issue + Sub-issues（Epic管理）
+
+複数のIssueに分割し、epicブランチを作成する場合は、**親Issue + Sub-issues**で管理する。
+
+### 親Issueの作成
+
+- epicの全体像を示す親Issueを作成する
+- タイトルは機能全体を表すユーザーストーリー形式にする
+- 本文には概要、技術方針、epicブランチ名、Sub-issuesの一覧を記載する
+
+### Sub-issuesの紐づけ
+
+分割した各IssueをSub-issuesとして親Issueに紐づける。GitHub APIを使用する：
+
+```bash
+# 子IssueのIDを取得してSub-issueとして追加
+SUB_ID=$(gh api repos/{owner}/{repo}/issues/{child_number} --jq '.id')
+gh api repos/{owner}/{repo}/issues/{parent_number}/sub_issues --input - <<< "{\"sub_issue_id\": $SUB_ID}"
+```
+
+### 運用ルール
+
+- 全Sub-issuesの作業が完了したら、epicブランチをmainにマージし、親Issueをクローズする
+- 親Issueの進捗はSub-issuesの完了数で自動的に可視化される
+
 ## 実行手順
 
 このスキルは**対話型**です。各ステップでユーザーに質問し、要件を明確にしてからIssueを作成します。
@@ -139,3 +164,11 @@ description: ユーザーが入力した要件をもとに、github issueにissu
   - body: Issue本文
 - 複数Issueの場合は順番に作成する
 - 作成結果をユーザーに共有する
+
+### 7. Sub-issuesの紐づけ（Epic管理の場合）
+
+epicブランチを作成した場合、以下を実行する：
+
+- 親Issueを作成する（epicの全体像を示す）
+- ステップ6で作成した各Issueを親IssueのSub-issuesとして紐づける（GitHub API使用）
+- 親IssueのURLをユーザーに共有する
