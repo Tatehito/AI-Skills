@@ -105,6 +105,7 @@ gh api repos/{owner}/{repo}/issues/{parent_number}/sub_issues --input - <<< "{\"
 
 ### 運用ルール
 
+- 親Issueには `epic` ラベルを付ける（ラベルが未作成の場合は `gh label create "epic" --description "複数のSub-issuesを束ねる親Issue" --color "7B68EE"` で作成する）
 - 全Sub-issuesの作業が完了したら、epicブランチをmainにマージし、親Issueをクローズする
 - 親Issueの進捗はSub-issuesの完了数で自動的に可視化される
 
